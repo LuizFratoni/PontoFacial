@@ -14,7 +14,7 @@ namespace PontoFacial.App;
 public partial class RecognizeForm : Form
 {
     // --- CONFIGURAÇÃO DA API ---
-    private const string ApiBaseUrl = "http://localhost:5097"; 
+    private const string ApiBaseUrl = "http://10.10.0.13:5097"; 
     private const string ApiEndpoint = "/api/recognize";
 
     // Componentes para comunicação com a API
@@ -182,7 +182,7 @@ public partial class RecognizeForm : Form
                 if (response.IsSuccessStatusCode)
                 {
                     var responseJson = await response.Content.ReadAsStringAsync();
-                    responseJson.
+  
                     // Aqui podemos deserializar a resposta se quisermos, por enquanto, apenas exibimos uma mensagem.
                     UpdateStatusLabel("API respondeu: Rosto recebido!");
                 }

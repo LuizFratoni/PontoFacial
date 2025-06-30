@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-
+using System.Text.Json;
 namespace PontoFacial.Api;
 
 public class PersonIdentity
@@ -23,7 +23,7 @@ public class FaceSet
 
     public Dictionary<string, PersonIdentity> KnownFaces { get; set; } = new Dictionary<string, PersonIdentity>();
 
-    public FaceSet Instance
+    public static FaceSet Instance
     {
         get
         {
@@ -56,10 +56,10 @@ public class FaceSet
                 EncodingData = encodingData
             };
         }
-        Console.WriteLine($"Carregados {_knownFaces.Count} rostos conhecidos da base de dados.");
+        Console.WriteLine($"Carregados {KnownFaces.Count} rostos conhecidos da base de dados.");
     }
 
-    public async Task RegisterNewPerson(string userId, string name, string rawEncoding, double[] encodingData)
+    public async Task<PersonIdentity> RegisterNewPerson(string userId, string name, string rawEncoding, double[] encodingData)
     {
         using FaceDbContext dbContext = new FaceDbContext();
 
@@ -70,16 +70,17 @@ public class FaceSet
         {
             Console.WriteLine($"Atualizando utilizador existente: {name} (ID: {userId})");
             pessoaExistente.Name = name;
-            pessoaExistente.FaceEncodingData = encodingJson;
+
+            pessoaExistente.FaceEncodingData = rawEncoding;
 
 
             dbContext.People.Update(pessoaExistente); // Marca a entidade como modificada
             await dbContext.SaveChangesAsync();
 
-            PersonIdentity p = _knownFaces[userId];
+            PersonIdentity p = KnownFaces[userId];
             p.EncodingData = encodingData;
 
-            return (true, $"Usuário '{userId}' foi atualizado com sucesso.");
+            return p;
         }
         else
         {
@@ -88,7 +89,7 @@ public class FaceSet
             {
                 UserId = userId,
                 Name = name,
-                FaceEncodingData = encodingJson
+                FaceEncodingData = rawEncoding
             };
 
             dbContext.People.Add(newPerson);
@@ -98,11 +99,11 @@ public class FaceSet
             {
                 Id = userId,
                 Name = name,
-                EncodingData = rawEncoding
+                EncodingData = encodingData
             };
 
             KnownFaces[userId] = p;
-            return (true, $"Utilizador '{name}' registado com sucesso.");
+            return p;
         }
     }
 

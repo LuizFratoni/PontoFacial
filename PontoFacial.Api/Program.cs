@@ -59,9 +59,9 @@ app.MapPost("/api/register", async (
     await imageFile.CopyToAsync(ms);
     var imageBytes = ms.ToArray();
 
-    var result = await recognitionService.RegisterNewPerson(userId, userName, imageBytes);
+    PersonIdentity result = await recognitionService.RegisterNewPerson(userId, userName, imageBytes);
 
-    return result.success ? Results.Ok(new { message = result.message }) : Results.BadRequest(new { message = result.message });
+    return result != null ? Results.Ok(new { id = result.Id, message = "Usuário Registrado" }) : Results.BadRequest(new { message = "Erro Registrando usuário" });
 })
 .DisableAntiforgery();
 

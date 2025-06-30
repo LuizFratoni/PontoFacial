@@ -27,7 +27,7 @@ public class FaceRecognitionService
     }
 
 
-    public async Task RegisterNewPerson(string userId, string name, byte[] imageBytes)
+    public async Task<PersonIdentity> RegisterNewPerson(string userId, string name, byte[] imageBytes)
     {
         Console.WriteLine($"Tentando registar novo utilizador: {name} (ID: {userId})");
 
@@ -40,14 +40,15 @@ public class FaceRecognitionService
 
         if (encodings.Length != 1)
         {
-            return (false, $"A imagem deve conter exatamente um rosto. Foram encontrados {encodings.Length}.");
+            Console.WriteLine($"A imagem deve conter exatamente um rosto. Foram encontrados {encodings.Length}");
+            return null;
         }
 
         var encoding = encodings.First();
         var rawEncoding = encoding.GetRawEncoding().ToArray();
         var encodingJson = JsonSerializer.Serialize(rawEncoding);
 
-        return faces.RegisterNewPerson(userId, name, encodingJson, rawEncoding);
+        return await faces.RegisterNewPerson(userId, name, encodingJson, rawEncoding);
     }
 
     public PersonIdentity IdentifyFace(FaceRecognitionDotNet.Image unknownImage)

@@ -13,7 +13,7 @@ namespace PontoFacial.App;
 public partial class RegisterForm : Form
 {
     // --- CONFIGURAÇÃO DA API ---
-    private const string ApiBaseUrl = "http://localhost:5097"; // <-- MUDE AQUI SE NECESSÁRIO
+    private const string ApiBaseUrl = "http://10.10.0.13:5097"; // <-- MUDE AQUI SE NECESSÁRIO
     private const string ApiRegisterEndpoint = "/api/register";
     // -------------------------
 
